@@ -6,6 +6,12 @@ import NavigatorScreenManager from "./NavigatorScreenManager";
 const RootNavigator = createStackNavigator({
     [NavigatorScreenName.FlashCardScreen]:{
         screen: NavigatorScreenManager.FlashCardScreen,
+    },
+    [NavigatorScreenName.DefaultStartGetCard]:{
+        screen: NavigatorScreenManager.DefaultStartGetCard,
+    },
+    [NavigatorScreenName.MyFlashCard]:{
+        screen: NavigatorScreenManager.MyFlashCard,
     }
 },{
     navigationOptions:{
