@@ -14,7 +14,7 @@ export const ProjectColor = StyleSheet.create({
         color: "rgba(0,0,0,0.45)",
     },
     main: {
-        // color: "",
+        color: "rgb(200,200,200)",
     },
     separator: {
         color: "#E6E6E6",       // rgb(230,230,230)
