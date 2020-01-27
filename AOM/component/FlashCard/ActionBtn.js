@@ -4,11 +4,15 @@ import ActionButton from "react-native-action-button";
 import Icon_ionicons from "react-native-vector-icons/dist/Ionicons";
 import Icon_AntDesign from "react-native-vector-icons/dist/AntDesign";
 import Icon_MaterialCommunityIcons from "react-native-vector-icons/dist/MaterialCommunityIcons";
+import Icon_MaterialIcons from "react-native-vector-icons/dist/MaterialIcons";
 import {ProjectStyle,ProjectColor} from "../../style/index";
+import NavigatorScreenName from "../../navigation/NavigatorScreenName";
+import NavigationHelper from "../../Utils/NavigationHelper";
 
 const ACTIONBTN_HEIGHT = 66;
 const imgStyle = {...ProjectColor.main,fontSize:27,};
 const ICON_ALL_CARD = <Icon_MaterialCommunityIcons name={"cards-playing-outline"} style={imgStyle}/>;
+const ICON_ADD_CARD = <Icon_MaterialIcons name={"library-add"} style={imgStyle}/>
 
 export default class ActionBtn extends Component {
     constructor(props) {
@@ -18,7 +22,12 @@ export default class ActionBtn extends Component {
     }
 
     onClickedWatchAllCard = () => {
-        ToastAndroid.show("clicked",ToastAndroid.LONG);
+    }
+
+    onClickedAddCard = () => {
+        requestAnimationFrame(()=>{
+            NavigationHelper.navigate(NavigatorScreenName.NewCard);
+        });
     }
 
     renderInactiveIcon = () => {
@@ -40,11 +49,7 @@ export default class ActionBtn extends Component {
     renderIcon = (active) => {
         return(
             <View>
-                {(active)?
-                    this.renderActiveIcon()
-                :
-                    this.renderInactiveIcon()
-                }
+                {(active)?this.renderActiveIcon():this.renderInactiveIcon()}
             </View>
         );  
     }
@@ -86,6 +91,7 @@ export default class ActionBtn extends Component {
                 renderIcon = {(active)=>(this.renderIcon(active))}
             >
                 {this.renderBtnItem(ICON_ALL_CARD,"看全部卡片",()=>{this.onClickedWatchAllCard()})}
+                {this.renderBtnItem(ICON_ADD_CARD,"新增卡片",()=>{this.onClickedAddCard()})}
             </ActionButton>
         );
     }

@@ -1,6 +1,6 @@
 const NavigatorScreenName = {
     FlashCardScreen: "FlashCardScreen",
-    DefaultStartGetCard: "DefaultStartGetCard",
+    NewCard: "NewCard",
     MyFlashCard: "MyFlashCard",
 }
 

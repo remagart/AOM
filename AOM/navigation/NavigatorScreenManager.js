@@ -1,10 +1,10 @@
 import FlashCardScreen from "../screen/FlashCard/FlashCardScreen";
-import DefaultStartGetCard from "../screen/FlashCard/DefaultStartGetCard";
+import NewCard from "../screen/FlashCard/NewCard";
 import MyFlashCard from "../screen/FlashCard/MyFlashCard";
 
 const NavigatorScreenManager = {
     FlashCardScreen: FlashCardScreen,
-    DefaultStartGetCard: DefaultStartGetCard,
+    NewCard: NewCard,
     MyFlashCard: MyFlashCard,
 }
 

@@ -12,14 +12,7 @@ export default class FlashCardScreen extends Component {
         };
     }
 
-    onClickedDefaultFlashCard = () => {
-        ToastAndroid.show("Clicked",ToastAndroid.LONG);
-        requestAnimationFrame(()=>{
-            this.props.navigation.navigate(NavigatorScreenName.DefaultStartGetCard);
-        });
-    }
-
-    onClickedMyFlashCard = () => {
+    onClickedStartFlashCard = () => {
         ToastAndroid.show("Clicked",ToastAndroid.LONG);
         requestAnimationFrame(()=>{
             this.props.navigation.navigate(NavigatorScreenName.MyFlashCard);
@@ -36,9 +29,9 @@ export default class FlashCardScreen extends Component {
         )
     }
 
-    renderMyFlashCard = () => {
+    renderStartFlashCard = () => {
         return (
-            <TouchableOpacity onPress={()=>{this.onClickedMyFlashCard()}}>
+            <TouchableOpacity onPress={()=>{this.onClickedStartFlashCard()}}>
                 <View style={styles.btnView}>
                     <Text style={[ProjectStyle.textBody1,ProjectColor.textNormal]}>開始抽卡</Text>
                 </View>
@@ -49,9 +42,7 @@ export default class FlashCardScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                {this.renderDefaultFlashCard()}
-                <View style = {{height: 32}} />
-                {this.renderMyFlashCard()}
+                {this.renderStartFlashCard()}
 
                 {/* need to put on the bottom of render() */}
                 <ActionBtn />

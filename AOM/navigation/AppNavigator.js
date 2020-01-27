@@ -7,8 +7,8 @@ const RootNavigator = createStackNavigator({
     [NavigatorScreenName.FlashCardScreen]:{
         screen: NavigatorScreenManager.FlashCardScreen,
     },
-    [NavigatorScreenName.DefaultStartGetCard]:{
-        screen: NavigatorScreenManager.DefaultStartGetCard,
+    [NavigatorScreenName.NewCard]:{
+        screen: NavigatorScreenManager.NewCard,
     },
     [NavigatorScreenName.MyFlashCard]:{
         screen: NavigatorScreenManager.MyFlashCard,
