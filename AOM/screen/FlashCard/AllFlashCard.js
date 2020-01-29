@@ -3,6 +3,7 @@ import { Text, View,StyleSheet,FlatList,Image,Dimensions } from 'react-native';
 import {ProjectColor,ProjectStyle} from "../../style/index";
 import NavigationHelper from "../../Utils/NavigationHelper";
 import ActionBtn from "../../component/FlashCard/ActionBtn";
+import APIManager from "../../Utils/Fetch/APIManager";
 
 const COLUMN_TYPE = {
     effect:{
@@ -23,9 +24,23 @@ export default class AllFlashCard extends Component {
     constructor(props){
         super(props);
 
+        this.api = new APIManager();
+
         this.state = {
             titleTxt: 0,
         }
+    }
+
+    componentDidMount(){
+        this.fetchData();
+    }
+
+    fetchData = async () => {
+        let response = await this.api.getFlashCardData();
+        let responseJSON = await response.json();
+
+        console.log("aaa", responseJSON);
+
     }
 
     renderSeperate = () => {
