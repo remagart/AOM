@@ -28,6 +28,7 @@ export default class AllFlashCard extends Component {
 
         this.state = {
             titleTxt: 0,
+            data: [],
         }
     }
 
@@ -39,8 +40,19 @@ export default class AllFlashCard extends Component {
         let response = await this.api.getFlashCardData();
         let responseJSON = await response.json();
 
-        console.log("aaa", responseJSON);
-
+        let data = [];
+        console.log("[AllFlashCard] fetchData", responseJSON);
+        if(responseJSON && responseJSON.feed && responseJSON.feed.entry && responseJSON.feed.entry.length > 0){
+            let dataSrc = responseJSON.feed.entry;
+            data = dataSrc.map((item,index)=>{
+                return {
+                    effectTitle: item.gsx$effecttitle.$t,
+                    reference: item.gsx$reference.$t,
+                    youtubeLink: item.gsx$youtubelink.$t,
+                }
+            })
+        }
+        this.setState({data: data});
     }
 
     renderSeperate = () => {
@@ -49,9 +61,23 @@ export default class AllFlashCard extends Component {
         )
     }
 
+    renderYoutubeLinkTxt = (title,content,lineNum) => {
+        return (
+            <View style={{width: NavigationHelper.SCREEN_WIDTH - 32 - 60}}>
+                <Text style={[ProjectStyle.textCaption,ProjectColor.textWeight]}>{title}</Text>
+                <Text style={[ProjectStyle.textCaption,ProjectColor.textLight]} numberOfLines={lineNum}>{content}</Text>
+            </View>
+        )
+    }
+
     renderText = (obj,content) => {
         let title = obj.title;
-        let lineNum = (obj.column_type == COLUMN_TYPE.effect.column_type)? 3:0;
+        let lineNum = (obj.column_type === COLUMN_TYPE.effect.column_type)? 3:0;
+
+        if(obj.column_type === COLUMN_TYPE.youtubeLink.column_type){
+            return this.renderYoutubeLinkTxt(title,content,lineNum);
+        }
+
         return (
             <View style={{flexDirection: "row",}}>
                 <View onLayout={(e)=>{
@@ -61,33 +87,32 @@ export default class AllFlashCard extends Component {
                         });
                     }
                 }}>
-                    <Text style={[ProjectStyle.textCaption,ProjectColor.textNormal]}>{title}</Text>
+                    <Text style={[ProjectStyle.textCaption,ProjectColor.textWeight,{fontWeight:"bold"}]}>{title}</Text>
                 </View>
                 <View style = {{width: NavigationHelper.SCREEN_WIDTH - 32 - 60 - 8 - this.state.titleTxt}}>
-                    <Text style={[ProjectStyle.textCaption,ProjectColor.textNormal]} numberOfLines={lineNum}>{content}</Text>
+                    <Text style={[ProjectStyle.textCaption,ProjectColor.textWeight,{fontWeight:"bold"}]} numberOfLines={lineNum}>{content}</Text>
                 </View>
             </View>
         )
     }
 
-    renderItem = () => {
-        let t = "內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容";
+    renderItem = (item) => {
         return (
             <View style={{flexDirection: "row",paddingVertical: 8,paddingHorizontal: 16,backgroundColor:"#FFF"}}>
                 <View>
                     <Image source={{uri: "https://img.ltn.com.tw/Upload/news/600/2018/12/11/phpGFBDNm.jpg"}} style={{width: 60,height:60,}}/>
                 </View>
                 <View style={{padding:4,}}>
-                    {this.renderText(COLUMN_TYPE.effect,t)}
-                    {this.renderText(COLUMN_TYPE.reference,"內容")}
-                    {this.renderText(COLUMN_TYPE.youtubeLink,"內容")}
+                    {this.renderText(COLUMN_TYPE.effect,item.effectTitle)}
+                    {this.renderText(COLUMN_TYPE.reference,item.reference)}
+                    {this.renderText(COLUMN_TYPE.youtubeLink,item.youtubeLink)}
                 </View>
             </View>
         )
     }
 
     renderList = () => {
-        let data = new Array(10).fill(1);
+        let data = this.state.data;
         return (
             <View style={{flex: 1}}>
                 <FlatList 
