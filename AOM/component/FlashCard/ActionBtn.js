@@ -10,7 +10,7 @@ import NavigatorScreenName from "../../navigation/NavigatorScreenName";
 import NavigationHelper from "../../Utils/NavigationHelper";
 
 const ACTIONBTN_HEIGHT = 66;
-const imgStyle = {...ProjectColor.main,fontSize:27,};
+const imgStyle = {color: ProjectColor.main.color,fontSize:27,};
 const ICON_ALL_CARD = <Icon_MaterialCommunityIcons name={"cards-playing-outline"} style={imgStyle}/>;
 const ICON_ADD_CARD = <Icon_MaterialIcons name={"library-add"} style={imgStyle}/>
 
@@ -22,6 +22,9 @@ export default class ActionBtn extends Component {
     }
 
     onClickedWatchAllCard = () => {
+        requestAnimationFrame(()=>{
+            NavigationHelper.navigate(NavigatorScreenName.AllFlashCard);
+        });
     }
 
     onClickedAddCard = () => {

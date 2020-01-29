@@ -12,7 +12,10 @@ const RootNavigator = createStackNavigator({
     },
     [NavigatorScreenName.MyFlashCard]:{
         screen: NavigatorScreenManager.MyFlashCard,
-    }
+    },
+    [NavigatorScreenName.AllFlashCard]:{
+        screen: NavigatorScreenManager.AllFlashCard,
+    },
 },{
     navigationOptions:{
         

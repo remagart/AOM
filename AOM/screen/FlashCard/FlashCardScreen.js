@@ -4,12 +4,16 @@ import {ProjectStyle,ProjectColor} from "../../style";
 import NavigationHelper from "../../Utils/NavigationHelper";
 import NavigatorScreenName from "../../navigation/NavigatorScreenName";
 import ActionBtn from "../../component/FlashCard/ActionBtn";
+import LocalStorage from "../../Utils/LocalStorage";
 
 export default class FlashCardScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
         };
+    }
+
+    componentDidMount(){
     }
 
     onClickedStartFlashCard = () => {
