@@ -71,7 +71,6 @@ export default class NewCard extends Component {
             return;
         }
         ToastComponent.showToast("新增成功",ToastComponent.SUCCESS);
-        this.props.navigation.navigate(NavigatorScreenName.FlashCardScreen);
     }
 
     onClickedClear = () => {
