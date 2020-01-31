@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text,StyleSheet,Animated,Easing,TouchableOpacity } from 'react-native';
+import { View, Text,StyleSheet,Animated,Easing,TouchableOpacity,Dimensions } from 'react-native';
 import NavigationHelper from "../../Utils/NavigationHelper";
 import {ProjectColor,ProjectStyle} from "../../style/index";
+import ActionBtn from "../../component/FlashCard/ActionBtn";
+
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 const fakeData = {
   effectTitle: "3 fly",
@@ -36,8 +39,11 @@ export default class MyFlashCard extends Component {
 
     this.setState({isTitleSide: !this.state.isTitleSide},()=>{
       this.rotateAnimated.start(() => {
-        let h = (NavigationHelper.SCREEN_WIDTH - 32);
-        if(h == this.state.cardInitHeight)  h = h * 0.6;
+        let h = (NavigationHelper.SCREEN_WIDTH - 32) * 0.6;
+
+        if(this.state.isTitleSide == false){
+          h = SCREEN_HEIGHT - 66 - NavigationHelper.HEADER_HEIGHT - 32 - 16;
+        }
   
         this.setState({
           cardInitHeight: h,
@@ -52,6 +58,17 @@ export default class MyFlashCard extends Component {
 
   }
 
+  renderVideo = () => {
+    let videoW = NavigationHelper.SCREEN_WIDTH - 32 - 32;
+    let videoH = (videoW * 9) / 16;
+
+    return (
+      <View style={{backgroundColor: "#DDFFAA",width: videoW,height:videoH}}>
+
+      </View>
+    )
+  }
+
   renderTitleSide = () => {
 
     let title = this.state.allCardData.effectTitle;
@@ -64,9 +81,18 @@ export default class MyFlashCard extends Component {
   }
 
   renderDetailSide = () => {
+
+    let title = this.state.allCardData.effectTitle;
+    let reference =  this.state.allCardData.reference;
+    
     return (
-      <View>
-        <Text>背面</Text>
+      <View style={styles.detailSide}>
+        {this.renderVideo()}
+        <View style={{marginTop: 16}}>
+          <Text style={[ProjectStyle.textBody2,ProjectColor.textNormal]}>效果名稱: {title}</Text>
+          <View style={{height: 8}}/>
+          <Text style={[ProjectStyle.textBody2,ProjectColor.textNormal]}>參考資訊: {reference}</Text>
+        </View>
       </View>
     )
   }
@@ -109,6 +135,8 @@ export default class MyFlashCard extends Component {
       <View style = {styles.container}>
         {this.renderCard()}
         {this.renderStartAgain()}
+
+        <ActionBtn />
       </View>
     );
   }
@@ -129,7 +157,7 @@ const styles = StyleSheet.create({
   },
   startAgainBtn:{
     backgroundColor: "rgb(200,200,200)",
-    width: (NavigationHelper.SCREEN_WIDTH - 32),
+    width: (NavigationHelper.SCREEN_WIDTH - 32 - 66 - 8),
     height: 50,
     borderColor: "#000",
     borderWidth: 1,
@@ -138,6 +166,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     position: "absolute",
     bottom: 30,
+    left: 16,
   },
   titleSide: {
     ...ProjectColor.main,
@@ -145,5 +174,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  detailSide:{
+    flex: 1,
+    backgroundColor: "#FFF",
+    margin: 16,
+  }
 })
 
