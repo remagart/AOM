@@ -3,6 +3,7 @@ import { View, Text,StyleSheet,Animated,Easing,TouchableOpacity,Dimensions } fro
 import NavigationHelper from "../../Utils/NavigationHelper";
 import {ProjectColor,ProjectStyle} from "../../style/index";
 import ActionBtn from "../../component/FlashCard/ActionBtn";
+import Youtube from "react-native-youtube";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
@@ -22,6 +23,7 @@ export default class MyFlashCard extends Component {
       isTitleSide: true,
 
       allCardData: fakeData,
+
     };
 
     this.rotateAnimated = Animated.timing(
@@ -133,7 +135,17 @@ export default class MyFlashCard extends Component {
   render() {
     return (
       <View style = {styles.container}>
-        {this.renderCard()}
+        {/* {this.renderCard()} */}
+        
+        <Youtube 
+          // apiKey = ""
+          videoId="5MefjboXD7o" // The YouTube video ID
+          fullscreen = {false}
+          control = {1}
+          play = {true}
+          style={{ alignSelf: 'stretch', width: 320,height: 180,}}
+        />
+        
         {this.renderStartAgain()}
 
         <ActionBtn />
