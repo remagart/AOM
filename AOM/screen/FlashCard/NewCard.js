@@ -7,6 +7,7 @@ import NavigationHelper from "../../Utils/NavigationHelper";
 import NavigatorScreenName from "../../navigation/NavigatorScreenName";
 import ActionBtn from "../../component/FlashCard/ActionBtn";
 import ToastComponent from "../../component/Common/ToastComponent";
+import LocalSQLite from "../../Utils/SQLite/LocalSQLite";
 
 const FOCUS_COLOR = "rgba(0,0,0,0.8)";
 const COLUMN_TYPE = {
@@ -26,6 +27,7 @@ export default class NewCard extends Component {
         this.keyboardDidShowListener = null;
         this.keyboardDidHideListener = null;
 
+        this.sqlite = new LocalSQLite();
         
         this.state = {
             onFocusColumn: COLUMN_TYPE.EMPTY,
@@ -43,10 +45,13 @@ export default class NewCard extends Component {
         };
     }
 
-    componentDidMount(){
+    async componentDidMount(){
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidShow",this.keyboardShow);
         this.keyboardDidHideListener = Keyboard.addListener("keyboardDidHide",this.keyboardHide);
         
+        // @refresh reset
+        let userData = await this.sqlite.selectAllUsers();
+        console.log("ghjkghjkl",userData);
     }
 
     componentWillUnmount(){
