@@ -6,6 +6,7 @@ const TABLE_USER_FLASH_CARD = "userFlashCard";
 
 const SQL = {
     SELECT_ALL: "select * from " + TABLE_USER_FLASH_CARD,
+    INSET_USER: `INSERT INTO ${TABLE_USER_FLASH_CARD} VALUES (?, ?, ?, ?)`,
 } 
 
 export default class LocalSQLite {
@@ -33,12 +34,12 @@ export default class LocalSQLite {
         }
     }
 
-    executeSQL = async (sql) => {
+    executeSQL = async (sql,params = []) => {
         await this.openDB();
 
         let response =  new Promise((resolve,reject)=>{
             this.dbObj.transaction((db)=>{
-                db.executeSql(sql,[],(tx,result)=>{
+                db.executeSql(sql,params,(tx,result)=>{
                     console.log("executeSQL success");
                     resolve(result);
                 },(err)=>{
@@ -67,7 +68,6 @@ export default class LocalSQLite {
                 users.push({...rows.item(i)});
             }
             console.log("users",users);
-            // this.closeDB();
             return users;
         }
         else{
@@ -75,5 +75,12 @@ export default class LocalSQLite {
         }
     }
 
+    addUser = async (currentId,effect,reference,youtubeLink) => {
+        let data = [currentId + 1,effect,reference,youtubeLink];
+        console.log("data",data);
+        let result = await this.executeSQL(SQL.INSET_USER,data);
+        
+        console.debug("add user result",result);
+    }
 
 }

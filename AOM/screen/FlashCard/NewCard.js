@@ -1,3 +1,4 @@
+// @refresh reset
 import React, { Component } from 'react';
 import { View, Text,StyleSheet,TextInput,
         TouchableWithoutFeedback,TouchableOpacity,
@@ -42,6 +43,8 @@ export default class NewCard extends Component {
             youtubeLink: "",
 
             isKeyboardShow: false,
+
+            currentUserTableId: 0,     // The final data id which in the table of userFlashCard
         };
     }
 
@@ -49,9 +52,12 @@ export default class NewCard extends Component {
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidShow",this.keyboardShow);
         this.keyboardDidHideListener = Keyboard.addListener("keyboardDidHide",this.keyboardHide);
         
-        // @refresh reset
         let userData = await this.sqlite.selectAllUsers();
-        console.log("ghjkghjkl",userData);
+        console.log("userData",userData);
+
+        if(userData && userData.length > 0){
+            this.setState({currentUserTableId: userData.length});
+        }
     }
 
     componentWillUnmount(){
@@ -70,11 +76,24 @@ export default class NewCard extends Component {
         (this.state.onFocusEditRef)? this.state.onFocusEditRef.blur():null;
     }
 
-    onClickedAdd = () => {
+    onClickedAdd = async () => {
         if(this.state.effectTitle == ""){
             ToastComponent.showToast("請輸入效果名稱喔",ToastComponent.FAIL);
             return;
         }
+
+        let id = this.state.currentUserTableId;
+        let ef = this.state.effectTitle;
+        let re = this.state.reference;
+        let you = this.state.youtubeLink
+        await this.sqlite.addUser(id,ef,re,you);
+        this.setState({
+            currentUserTableId: id + 1,
+            effectTitle: "",
+            reference: "",
+            youtubeLink: "",
+        })
+
         ToastComponent.showToast("新增成功",ToastComponent.SUCCESS);
     }
 
@@ -106,6 +125,7 @@ export default class NewCard extends Component {
                     onChangeText={(txt)=>{
                         this.setState({effectTitle: txt});
                     }}
+                    value = {this.state.effectTitle}
                 />
             </View>
         )
@@ -131,6 +151,7 @@ export default class NewCard extends Component {
                     onChangeText={(txt)=>{
                         this.setState({reference: txt});
                     }}
+                    value = {this.state.reference}
                 />
             </View>
         )
@@ -156,6 +177,7 @@ export default class NewCard extends Component {
                     onChangeText={(txt)=>{
                         this.setState({youtubeLink: txt});
                     }}
+                    value = {this.state.youtubeLink}
                 />
             </View>
         )
