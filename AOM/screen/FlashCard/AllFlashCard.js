@@ -4,6 +4,7 @@ import {ProjectColor,ProjectStyle} from "../../style/index";
 import NavigationHelper from "../../Utils/NavigationHelper";
 import ActionBtn from "../../component/FlashCard/ActionBtn";
 import APIManager from "../../Utils/Fetch/APIManager";
+import LocalSQLite from '../../Utils/SQLite/LocalSQLite';
 
 const COLUMN_TYPE = {
     effect:{
@@ -25,6 +26,7 @@ export default class AllFlashCard extends Component {
         super(props);
 
         this.api = new APIManager();
+        this.sqlite = new LocalSQLite();
 
         this.state = {
             titleTxt: 0,
@@ -32,8 +34,35 @@ export default class AllFlashCard extends Component {
         }
     }
 
-    componentDidMount(){
-        this.fetchData();
+    async componentDidMount(){
+        this.isMount = true;
+        await this.getLocalData();
+        await this.fetchData();
+    }
+
+    componentWillUnmount(){
+        this.isMount = false;
+    }
+
+    // 可以解決unmount，不做setState
+    setStateDidMount = (state, callback = () => {}) => {
+        if (this.isMount) {
+            this.setState(state, callback);
+        }
+    }
+
+    getLocalData = async () => {
+        let userData = await this.sqlite.selectAllUsers();
+        if(userData && userData.length > 0){
+            userData = userData.map((item)=>{
+                return {
+                    effectTitle: item.effect,
+                    reference: item.reference,
+                    youtubeLink: item.youtubeLink,
+                }
+            });
+        }
+        this.setStateDidMount({data: userData});
     }
 
     fetchData = async () => {
@@ -52,7 +81,9 @@ export default class AllFlashCard extends Component {
                 }
             })
         }
-        this.setState({data: data});
+
+        let d = [...this.state.data,...data];
+        this.setStateDidMount({data: d});
     }
 
     renderSeperate = () => {
