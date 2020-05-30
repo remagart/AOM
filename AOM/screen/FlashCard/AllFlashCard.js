@@ -5,6 +5,7 @@ import NavigationHelper from "../../Utils/NavigationHelper";
 import ActionBtn from "../../component/FlashCard/ActionBtn";
 import APIManager from "../../Utils/Fetch/APIManager";
 import LocalSQLite from '../../Utils/SQLite/LocalSQLite';
+import FetchAllCard from '../../Utils/Fetch/AllFlashCardData/FetchAllCard';
 
 const COLUMN_TYPE = {
     effect:{
@@ -25,8 +26,7 @@ export default class AllFlashCard extends Component {
     constructor(props){
         super(props);
 
-        this.api = new APIManager();
-        this.sqlite = new LocalSQLite();
+        this.fetchLib = new FetchAllCard();
 
         this.state = {
             titleTxt: 0,
@@ -36,7 +36,6 @@ export default class AllFlashCard extends Component {
 
     async componentDidMount(){
         this.isMount = true;
-        await this.getLocalData();
         await this.fetchData();
     }
 
@@ -51,39 +50,9 @@ export default class AllFlashCard extends Component {
         }
     }
 
-    getLocalData = async () => {
-        let userData = await this.sqlite.selectAllUsers();
-        if(userData && userData.length > 0){
-            userData = userData.map((item)=>{
-                return {
-                    effectTitle: item.effect,
-                    reference: item.reference,
-                    youtubeLink: item.youtubeLink,
-                }
-            });
-        }
-        this.setStateDidMount({data: userData});
-    }
-
     fetchData = async () => {
-        let response = await this.api.getFlashCardData();
-        let responseJSON = await response.json();
-
-        let data = [];
-        console.log("[AllFlashCard] fetchData", responseJSON);
-        if(responseJSON && responseJSON.feed && responseJSON.feed.entry && responseJSON.feed.entry.length > 0){
-            let dataSrc = responseJSON.feed.entry;
-            data = dataSrc.map((item,index)=>{
-                return {
-                    effectTitle: item.gsx$effecttitle.$t,
-                    reference: item.gsx$reference.$t,
-                    youtubeLink: item.gsx$youtubelink.$t,
-                }
-            })
-        }
-
-        let d = [...this.state.data,...data];
-        this.setStateDidMount({data: d});
+        let data = await this.fetchLib.fetchAllCardData();
+        this.setStateDidMount({data: data});
     }
 
     renderSeperate = () => {

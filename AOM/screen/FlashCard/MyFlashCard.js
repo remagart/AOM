@@ -6,6 +6,7 @@ import ActionBtn from "../../component/FlashCard/ActionBtn";
 import Youtube from "react-native-youtube";
 import key from "../../key/googleApiKey.json";
 import ToastComponent from '../../component/Common/ToastComponent';
+import FetchAllCard from '../../Utils/Fetch/AllFlashCardData/FetchAllCard';
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const ANDROID_ERROR = "UNAUTHORIZED_OVERLAY";
@@ -20,13 +21,15 @@ export default class MyFlashCard extends Component {
   constructor(props) {
     super(props);
 
+    this.fetchLib = new FetchAllCard();
+
     this.state = {
       animateValue: new Animated.Value(0),
       cardInitHeight: (NavigationHelper.SCREEN_WIDTH - 32) * 0.6,
       isTitleSide: true,
 
-      allCardData: fakeData,
-
+      allCardData: null,
+      chooseIdx: 0,
     };
 
     this.rotateAnimated = Animated.timing(
@@ -38,6 +41,30 @@ export default class MyFlashCard extends Component {
       }
     );
   }
+
+  async componentDidMount(){
+    this.isMount = true;
+    let data = await this.fetchLib.fetchAllCardData();
+    this.setStateDidMount({allCardData: data},()=>{
+      this.onClickedStartAgain();
+    });
+  }
+
+  componentWillUnmount(){
+    this.isMount = false;
+  }
+
+  // 可以解決unmount，不做setState
+  setStateDidMount = (state, callback = () => {}) => {
+    if (this.isMount) {
+        this.setState(state, callback);
+    }
+  }
+
+  //產生min到max之間的亂數
+  getRandom(min,max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+  };
 
   _startAnimated = () => {
     // this.state.animateValue.setValue(0);
@@ -60,7 +87,12 @@ export default class MyFlashCard extends Component {
   }
 
   onClickedStartAgain = () => {
-
+    let {allCardData} = this.state;
+    let chooseIdx = 0;
+    if(allCardData && allCardData.length > 0){
+      chooseIdx = this.getRandom(0,allCardData.length - 1);
+    }
+    this.setStateDidMount({chooseIdx: chooseIdx});
   }
 
   onError = (e) => {
@@ -93,8 +125,8 @@ export default class MyFlashCard extends Component {
   }
 
   renderTitleSide = () => {
-
-    let title = this.state.allCardData.effectTitle;
+    const {allCardData,chooseIdx} = this.state;
+    let title = (allCardData && allCardData[chooseIdx].effectTitle) || "";
 
     return (
       <View style={[styles.titleSide,{height: this.state.cardInitHeight - 2}]}>
@@ -104,9 +136,9 @@ export default class MyFlashCard extends Component {
   }
 
   renderDetailSide = () => {
-
-    let title = this.state.allCardData.effectTitle;
-    let reference =  this.state.allCardData.reference;
+    const {allCardData,chooseIdx} = this.state;
+    let title = (allCardData && allCardData[chooseIdx].effectTitle) || "";
+    let reference =  (allCardData && allCardData[chooseIdx].reference) || "";
     
     return (
       <View style={styles.detailSide}>
