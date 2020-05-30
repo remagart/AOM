@@ -78,7 +78,7 @@ export default class NewCard extends Component {
 
     onClickedAdd = async () => {
         if(this.state.effectTitle == ""){
-            ToastComponent.showToast("請輸入效果名稱喔",ToastComponent.FAIL);
+            ToastComponent.showToast("請輸入效果名稱喔",ToastComponent.STATUS_TOAST.FAIL);
             return;
         }
 
@@ -94,7 +94,7 @@ export default class NewCard extends Component {
             youtubeLink: "",
         })
 
-        ToastComponent.showToast("新增成功",ToastComponent.SUCCESS);
+        ToastComponent.showToast("新增成功",ToastComponent.STATUS_TOAST.SUCCESS);
     }
 
     onClickedClear = () => {

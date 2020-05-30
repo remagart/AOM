@@ -4,8 +4,11 @@ import NavigationHelper from "../../Utils/NavigationHelper";
 import {ProjectColor,ProjectStyle} from "../../style/index";
 import ActionBtn from "../../component/FlashCard/ActionBtn";
 import Youtube from "react-native-youtube";
+import key from "../../key/googleApiKey.json";
+import ToastComponent from '../../component/Common/ToastComponent';
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
+const ANDROID_ERROR = "UNAUTHORIZED_OVERLAY";
 
 const fakeData = {
   effectTitle: "3 fly",
@@ -60,13 +63,31 @@ export default class MyFlashCard extends Component {
 
   }
 
+  onError = (e) => {
+    console.log("err",e);
+    if(e && e.error == ANDROID_ERROR){
+      requestAnimationFrame(()=>{
+        ToastComponent.showToast("請使用全螢幕觀看",ToastComponent.STATUS_TOAST.DEFAULT);
+      });
+    }
+  }
+
   renderVideo = () => {
     let videoW = NavigationHelper.SCREEN_WIDTH - 32 - 32;
     let videoH = (videoW * 9) / 16;
 
     return (
       <View style={{backgroundColor: "#DDFFAA",width: videoW,height:videoH}}>
-
+        <Youtube 
+          apiKey = {key.key}
+          videoId="5MefjboXD7o" // The YouTube video ID
+          fullscreen = {false}
+          control = {1}
+          play = {true}
+          style={{ alignSelf: 'stretch', width: videoW,height: videoH,}}
+          onChangeState={e=>{console.log("ddd",e);}}
+          onError={this.onError}
+        />
       </View>
     )
   }
@@ -135,17 +156,7 @@ export default class MyFlashCard extends Component {
   render() {
     return (
       <View style = {styles.container}>
-        {/* {this.renderCard()} */}
-        
-        <Youtube 
-          // apiKey = ""
-          videoId="5MefjboXD7o" // The YouTube video ID
-          fullscreen = {false}
-          control = {1}
-          play = {true}
-          style={{ alignSelf: 'stretch', width: 320,height: 180,}}
-        />
-        
+        {this.renderCard()}
         {this.renderStartAgain()}
 
         <ActionBtn />
