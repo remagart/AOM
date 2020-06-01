@@ -12,12 +12,6 @@ import StringHelper from '../../Utils/StringHelper';
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const ANDROID_ERROR = "UNAUTHORIZED_OVERLAY";
 
-const fakeData = {
-  effectTitle: "3 fly",
-  reference: "這是參考",
-  youtubeLink: "www.google.com",
-}
-
 export default class MyFlashCard extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +25,7 @@ export default class MyFlashCard extends Component {
 
       allCardData: null,
       chooseIdx: 0,
+      alreadyChosenIdxArr: null,
       yt_Id: "",
     };
 
@@ -63,10 +58,40 @@ export default class MyFlashCard extends Component {
     }
   }
 
-  //產生min到max之間的亂數
+  // 產生min到max之間的亂數
+  // 遞迴產生index
   getRandom(min,max){
-    return Math.floor(Math.random()*(max-min+1))+min;
+    let {alreadyChosenIdxArr} = this.state;
+    let idx = Math.floor(Math.random()*(max-min+1))+min;
+    if(alreadyChosenIdxArr && alreadyChosenIdxArr.length > 0){
+      let findIdx = alreadyChosenIdxArr.find((item)=>{
+        return Number(item) === Number(idx);
+      });
+      if(findIdx != undefined){
+        idx = this.getRandom(min,max);
+      }
+    }
+    return idx;
   };
+
+  getRandom_and_setChosen = (min,max) => {
+    let {alreadyChosenIdxArr,allCardData} = this.state;
+    let idx = this.getRandom(min,max);
+    if(alreadyChosenIdxArr && alreadyChosenIdxArr.length > 0){
+      this.setStateDidMount({alreadyChosenIdxArr: [...alreadyChosenIdxArr,idx]},()=>{
+        let newArr = this.state.alreadyChosenIdxArr;
+        // 清空idx，使下一輪開始
+        if(newArr && (allCardData.length == newArr.length)){
+          this.setStateDidMount({alreadyChosenIdxArr: null});
+        }
+      });
+    }
+    else{
+      this.setStateDidMount({alreadyChosenIdxArr: [idx]});
+    }
+
+    return idx;
+  }
 
   _startAnimated = () => {
     // this.state.animateValue.setValue(0);
@@ -93,11 +118,17 @@ export default class MyFlashCard extends Component {
     let chooseIdx = 0;
     let id = "";
     if(allCardData && allCardData.length > 0){
-      chooseIdx = this.getRandom(0,allCardData.length - 1);
+      chooseIdx = this.getRandom_and_setChosen(0,allCardData.length - 1);
       let ytLink = allCardData[chooseIdx].youtubeLink;
       id = StringHelper.fotmatYT(ytLink);
     }
-    this.setStateDidMount({chooseIdx: chooseIdx,yt_Id: id});
+    this.setStateDidMount({chooseIdx: chooseIdx,yt_Id: id},()=>{
+      requestAnimationFrame(()=>{
+        if(this.state.isTitleSide == false){
+          this._startAnimated();
+        }
+      });
+    });
   }
 
   onError = (e) => {
