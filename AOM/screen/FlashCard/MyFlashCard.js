@@ -153,7 +153,7 @@ export default class MyFlashCard extends Component {
             videoId = {yt_Id} // The YouTube video ID
             fullscreen = {false}
             control = {1}
-            play = {true}
+            play = {false}
             style={{ alignSelf: 'stretch', width: videoW,height: videoH,}}
             onChangeState={e=>{console.log("ddd",e);}}
             onError={this.onError}
@@ -251,9 +251,12 @@ const styles = StyleSheet.create({
   },
   cardView: {
     width: NavigationHelper.SCREEN_WIDTH - 32,
-    backgroundColor: "#FFDDAA",
+    backgroundColor: "#FFF",
     borderColor: "#000",
     borderWidth: 1,
+    borderRadius: 8,
+    overflow: "hidden",
+    elevation: 10,
   },
   startAgainBtn:{
     backgroundColor: "rgb(200,200,200)",
