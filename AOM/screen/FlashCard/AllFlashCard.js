@@ -6,19 +6,29 @@ import ActionBtn from "../../component/FlashCard/ActionBtn";
 import APIManager from "../../Utils/Fetch/APIManager";
 import LocalSQLite from '../../Utils/SQLite/LocalSQLite';
 import FetchAllCard from '../../Utils/Fetch/AllFlashCardData/FetchAllCard';
+import StringHelper from '../../Utils/StringHelper';
+
+const IMAGE_WIDTH = 120;
+const IMAGE_HEIGHT = 67.5;
 
 const COLUMN_TYPE = {
     effect:{
-        title: "效果名稱: ",
+        title: " ",      // 效果名稱
         column_type: "effect",
+        fontSize: ProjectStyle.textBody1,
+        style: {fontWeight: "bold",...ProjectColor.textWeight},
     },
     reference: {
-        title: "參考資訊: ",
+        title: " ",     // 參考資訊
         column_type: "reference",
+        fontSize: ProjectStyle.textCaption,
+        style: {...ProjectColor.textNormal},
     },
     youtubeLink: {
-        title: "Youtube連結: ",
+        title: " ",      // Youtube連結
         column_type: "youtubeLink",
+        fontSize: ProjectStyle.textSmallest,
+        style: {},
     },
 }
 
@@ -63,8 +73,7 @@ export default class AllFlashCard extends Component {
 
     renderYoutubeLinkTxt = (title,content,lineNum) => {
         return (
-            <View style={{width: NavigationHelper.SCREEN_WIDTH - 32 - 60}}>
-                <Text style={[ProjectStyle.textCaption,ProjectColor.textWeight]}>{title}</Text>
+            <View style={{width: NavigationHelper.SCREEN_WIDTH - 32}}>
                 <Text style={[ProjectStyle.textCaption,ProjectColor.textLight]} numberOfLines={lineNum}>{content}</Text>
             </View>
         )
@@ -72,7 +81,12 @@ export default class AllFlashCard extends Component {
 
     renderText = (obj,content) => {
         let title = obj.title;
-        let lineNum = (obj.column_type === COLUMN_TYPE.effect.column_type)? 3:0;
+        let lineNum = 3;
+        switch(obj.column_type){
+            case COLUMN_TYPE.effect.column_type: lineNum = 2; break;
+            case COLUMN_TYPE.reference.column_type: lineNum = 3; break;
+            case COLUMN_TYPE.youtubeLink.column_type: lineNum = 0; break;
+        }
 
         if(obj.column_type === COLUMN_TYPE.youtubeLink.column_type){
             return this.renderYoutubeLinkTxt(title,content,lineNum);
@@ -89,24 +103,30 @@ export default class AllFlashCard extends Component {
                 }}>
                     <Text style={[ProjectStyle.textCaption,ProjectColor.textWeight,{fontWeight:"bold"}]}>{title}</Text>
                 </View>
-                <View style = {{width: NavigationHelper.SCREEN_WIDTH - 32 - 60 - 8 - this.state.titleTxt}}>
-                    <Text style={[ProjectStyle.textCaption,ProjectColor.textWeight,{fontWeight:"bold"}]} numberOfLines={lineNum}>{content}</Text>
+                <View style = {{width: NavigationHelper.SCREEN_WIDTH - 32 - IMAGE_WIDTH - 8 - this.state.titleTxt}}>
+                    <Text style={[obj.fontSize,obj.style]} numberOfLines={lineNum}>{content}</Text>
                 </View>
             </View>
         )
     }
 
     renderItem = (item) => {
+        let yt_id = item && StringHelper.fotmatYT(item.youtubeLink);
+        if(!yt_id)  yt_id = "no_image";
+        else        yt_id = `http://img.youtube.com/vi/${yt_id}/0.jpg`;
+        
         return (
-            <View style={{flexDirection: "row",paddingVertical: 8,paddingHorizontal: 16,backgroundColor:"#FFF"}}>
-                <View>
-                    <Image source={{uri: "https://img.ltn.com.tw/Upload/news/600/2018/12/11/phpGFBDNm.jpg"}} style={{width: 60,height:60,}}/>
+            <View style={{paddingVertical: 8,paddingHorizontal: 16,backgroundColor:"#FFF"}}>
+                <View style={{flexDirection: "row",marginBottom: 8}}>
+                    <View style={{marginTop: 8}}>
+                        <Image source={{uri: yt_id}} style={{width: IMAGE_WIDTH,height:IMAGE_HEIGHT,}}/>
+                    </View>
+                    <View style={{paddingHorizontal:4,}}>
+                        {this.renderText(COLUMN_TYPE.effect,item.effectTitle)}
+                        {this.renderText(COLUMN_TYPE.reference,item.reference)}
+                    </View>
                 </View>
-                <View style={{padding:4,}}>
-                    {this.renderText(COLUMN_TYPE.effect,item.effectTitle)}
-                    {this.renderText(COLUMN_TYPE.reference,item.reference)}
-                    {this.renderText(COLUMN_TYPE.youtubeLink,item.youtubeLink)}
-                </View>
+                {this.renderText(COLUMN_TYPE.youtubeLink,item.youtubeLink)}
             </View>
         )
     }
