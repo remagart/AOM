@@ -22,4 +22,7 @@ export const ProjectColor = StyleSheet.create({
         backgroundColor: "#E6E6E6",
         color: "#E6E6E6",       // rgb(230,230,230)
     },  
+    whiteTxt: {
+        color: "#FFF",       // rgb(255,255,255)
+    },  
 })

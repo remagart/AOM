@@ -7,6 +7,7 @@ import Youtube from "react-native-youtube";
 import key from "../../key/googleApiKey.json";
 import ToastComponent from '../../component/Common/ToastComponent';
 import FetchAllCard from '../../Utils/Fetch/AllFlashCardData/FetchAllCard';
+import StringHelper from '../../Utils/StringHelper';
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const ANDROID_ERROR = "UNAUTHORIZED_OVERLAY";
@@ -30,6 +31,7 @@ export default class MyFlashCard extends Component {
 
       allCardData: null,
       chooseIdx: 0,
+      yt_Id: "",
     };
 
     this.rotateAnimated = Animated.timing(
@@ -89,10 +91,13 @@ export default class MyFlashCard extends Component {
   onClickedStartAgain = () => {
     let {allCardData} = this.state;
     let chooseIdx = 0;
+    let id = "";
     if(allCardData && allCardData.length > 0){
       chooseIdx = this.getRandom(0,allCardData.length - 1);
+      let ytLink = allCardData[chooseIdx].youtubeLink;
+      id = StringHelper.fotmatYT(ytLink);
     }
-    this.setStateDidMount({chooseIdx: chooseIdx});
+    this.setStateDidMount({chooseIdx: chooseIdx,yt_Id: id});
   }
 
   onError = (e) => {
@@ -107,21 +112,30 @@ export default class MyFlashCard extends Component {
   renderVideo = () => {
     let videoW = NavigationHelper.SCREEN_WIDTH - 32 - 32;
     let videoH = (videoW * 9) / 16;
+    const {yt_Id} = this.state;
 
-    return (
-      <View style={{backgroundColor: "#DDFFAA",width: videoW,height:videoH}}>
-        <Youtube 
-          apiKey = {key.key}
-          videoId="5MefjboXD7o" // The YouTube video ID
-          fullscreen = {false}
-          control = {1}
-          play = {true}
-          style={{ alignSelf: 'stretch', width: videoW,height: videoH,}}
-          onChangeState={e=>{console.log("ddd",e);}}
-          onError={this.onError}
-        />
-      </View>
-    )
+    if(yt_Id && yt_Id != ""){
+      return (
+        <View style={{backgroundColor: "#DDFFAA",width: videoW,height:videoH}}>
+          <Youtube 
+            apiKey = {key.key}
+            videoId = {yt_Id} // The YouTube video ID
+            fullscreen = {false}
+            control = {1}
+            play = {true}
+            style={{ alignSelf: 'stretch', width: videoW,height: videoH,}}
+            onChangeState={e=>{console.log("ddd",e);}}
+            onError={this.onError}
+          />
+        </View>
+      )
+    }else{
+      return (
+        <View style={[styles.noVideoView,{width: videoW,height:videoH}]}>
+          <Text style={[ProjectStyle.textBody2,ProjectColor.whiteTxt,{fontWeight: "bold"}]}>請檢查youtube連結是否有誤</Text>
+        </View>
+      )
+    }
   }
 
   renderTitleSide = () => {
@@ -233,6 +247,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFF",
     margin: 16,
-  }
+  },
+  noVideoView: {
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 })
 
