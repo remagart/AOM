@@ -62,6 +62,7 @@ export default class AllFlashCard extends Component {
 
     fetchData = async () => {
         let data = await this.fetchLib.fetchAllCardData();
+        console.log("data",data);
         this.setStateDidMount({data: data});
     }
 

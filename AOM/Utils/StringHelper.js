@@ -12,14 +12,16 @@ export default class StringHelper {
 
     static fotmatYT(str){
         let regPrefix = /^https:\/\/youtu\.be\//gi;                   // fit to https://youtu.be/
-        let regPrefix2 = /^https:\/\/www\.youtube\.com\/watch\?v=/gi; // fit to https://www.youtube.com/watch?v=
-        let regSuffix = /^[a-zA-Z0-9-]+/gi;  // fit to character or number, Ex. Mefjb-oXD7
+        let regPrefix2 = /^https:\/\/www\.youtube\.com\/watch\?/gi; // fit to https://www.youtube.com/watch?
+        let regPrefix3 = /^(v=|.*&v=)/gi;      // fit to v=U6eoBRFSubc&feature=emb_logo or xxxx&v=yyyy
+        let regSuffix = /^[a-zA-Z0-9-_]+/gi;  // fit to character or number, Ex. Mefjb-oXD7
 
         let isYTLink = regPrefix.test(str) || regPrefix2.test(str);
         if(isYTLink == true){
             let temp = str.replace(regPrefix,"");
             temp = str.replace(regPrefix2,"");
-            id = temp.match(regSuffix);
+            let temp2 = temp.replace(regPrefix3,"");
+            id = temp2.match(regSuffix);
             return id[0];
         }else{
             return false;

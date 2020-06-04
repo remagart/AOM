@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text,TouchableOpacity,StyleSheet,ToastAndroid } from 'react-native';
+import { View, Text,TouchableOpacity,StyleSheet} from 'react-native';
 import {ProjectStyle,ProjectColor} from "../../style";
 import NavigationHelper from "../../Utils/NavigationHelper";
 import NavigatorScreenName from "../../navigation/NavigatorScreenName";
@@ -17,7 +17,6 @@ export default class FlashCardScreen extends Component {
     }
 
     onClickedStartFlashCard = () => {
-        ToastAndroid.show("Clicked",ToastAndroid.LONG);
         requestAnimationFrame(()=>{
             this.props.navigation.navigate(NavigatorScreenName.MyFlashCard);
         });
