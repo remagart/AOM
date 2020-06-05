@@ -132,7 +132,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "0.0.1"
+        multiDexEnabled true    // Android的function數上限是65536，所以設成true避免這個上限
     }
     splits {
         abi {
@@ -160,6 +161,9 @@ android {
             keyPassword ''+properties.getProperty("signed_key_Password")+''
             storeFile file(properties.getProperty("signed_key_storeFile"))
             storePassword ''+properties.getProperty("signed_key_Password")+''
+
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
     buildTypes {
